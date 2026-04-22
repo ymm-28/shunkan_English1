@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>瞬間英作文トレーニング</title>
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Hiragino Sans", "Yu Gothic", sans-serif;
+    background: #f4f6f9;
+    color: #333;
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* ===== ホーム画面 ===== */
+  .home-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+
+  .home-container h1 {
+    text-align: center;
+    color: #2c5282;
+    margin-bottom: 30px;
+    font-size: 1.8em;
+  }
+
+  .card {
+    background: white;
+    border-radius: 12px;
+    padding: 30px 25px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+  }
+
+  .field {
+    margin-bottom: 28px;
+  }
+
+  .field:last-child {
+    margin-bottom: 0;
+  }
+
+  .field-label {
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #2d3748;
+    display: block;
+  }
+
+  .value-display {
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #2c5282;
+    margin-bottom: 15px;
+  }
+
+  /* ===== スライダー共通 ===== */
+  .slider-wrapper {
+    position: relative;
+    height: 40px;
+    margin: 0 15px;
+  }
+
+  .slider-track {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    height: 6px;
+    background: #e2e8f0;
+    border-radius: 3px;
+  }
+
+  .slider-range {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 6px;
+    background: #4299e1;
+    border-radius: 3px;
+  }
+
+  .slider-wrapper input[type="range"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    background: transparent;
+    pointer-events: none;
+    -webkit-appearance: none;
+    appearance: none;
+    outline: none;
+    margin: 0;
+  }
+
+  .slider-wrapper.single input[type="range"] {
+    pointer-events: auto;
+  }
+
+  .slider-wrapper input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: white;
+    border: 3px solid #4299e1;
+    cursor: pointer;
+    pointer-events: auto;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  }
+
+  .slider-wrapper input[type="range"]::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: white;
+    border: 3px solid #4299e1;
+    cursor: pointer;
+    pointer-events: auto;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  }
+
+  .slider-wrapper input[type="range"]::-webkit-slider-runnable-track {
+    background: transparent;
+    border: none;
+  }
+
+  .slider-wrapper input[type="range"]::-moz-range-track {
+    background: transparent;
+    border: none;
+  }
+
+  .slider-endpoints {
+    display: flex;
+    justify-content: space-between;
+    margin: 4px 15px 0;
+    font-size: 0.85em;
+    color: #718096;
+  }
+
+  .checkbox-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+  }
+
+  .checkbox-wrapper input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: #4299e1;
+  }
+
+  .checkbox-wrapper.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .checkbox-wrapper.disabled input {
+    cursor: not-allowed;
+  }
+
+  /* テスト専用オプション(通常は非表示) */
+  .test-only-field {
+    display: none;
+    padding-left: 15px;
+    border-left: 3px solid #38a169;
+    margin-left: 3px;
+  }
+
+  .test-only-field.active {
+    display: block;
+  }
+
+  .test-only-hint {
+    font-size: 0.82em;
+    color: #718096;
+    margin-top: 6px;
+    margin-left: 30px;
+  }
+
+  .start-button {
+    width: 100%;
+    padding: 16px;
+    font-size: 1.2em;
+    font-weight: 600;
+    color: white;
+    background: #4299e1;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-top: 10px;
+  }
+
+  .start-button:hover {
+    background: #3182ce;
+  }
+
+  .start-button:active {
+    background: #2c5282;
+  }
+
+  .start-button.test-mode {
+    background: #38a169;
+  }
+
+  .start-button.test-mode:hover {
+    background: #2f855a;
+  }
+
+  .reset-link {
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    font-size: 0.85em;
+    color: #a0aec0;
+    text-decoration: underline;
+    cursor: pointer;
+    background: none;
+    border: none;
+    width: 100%;
+  }
+
+  .reset-link:hover {
+    color: #e53e3e;
+  }
+
+  /* ===== 共通: 固定ヘッダー ===== */
+  .study-screen, .test-screen {
+    display: none;
+  }
+
+  .study-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 12px 15px;
+    z-index: 100;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  .header-button {
+    padding: 10px 18px;
+    font-size: 0.95em;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+    flex: 1;
+    max-width: 200px;
+  }
+
+  .hide-all-button {
+    background: #ed8936;
+    color: white;
+  }
+
+  .hide-all-button:hover {
+    background: #dd6b20;
+  }
+
+  .end-button {
+    background: #718096;
+    color: white;
+  }
+
+  .end-button:hover {
+    background: #4a5568;
+  }
+
+  /* ===== 学習画面 ===== */
+  .study-content {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 85px 15px 40px;
+  }
+
+  .question-item {
+    background: white;
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    user-select: none;
+    position: relative;
+  }
+
+  .question-item:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  .question-item:active {
+    transform: scale(0.99);
+  }
+
+  .question-number {
+    font-size: 0.85em;
+    color: #718096;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .japanese-text {
+    font-size: 1.05em;
+    color: #2d3748;
+    margin-bottom: 8px;
+  }
+
+  .english-area {
+    min-height: 1.6em;
+    font-size: 1.05em;
+    color: #2c5282;
+    font-weight: 500;
+    padding-top: 8px;
+    border-top: 1px dashed #e2e8f0;
+    visibility: hidden;
+  }
+
+  .english-area.visible {
+    visibility: visible;
+  }
+
+  /* ===== 学習状況フラグ（右上） ===== */
+  .status-flag {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(0,0,0,0.1);
+  }
+
+  .status-flag.unlearned { background: #e2e8f0; }
+  .status-flag.red      { background: #fc8181; border-color: #e53e3e; }
+  .status-flag.yellow   { background: #f6e05e; border-color: #d69e2e; }
+  .status-flag.green    { background: #68d391; border-color: #38a169; }
+
+  .status-flag[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    top: 20px;
+    right: 0;
+    background: #2d3748;
+    color: white;
+    font-size: 0.75em;
+    padding: 4px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    z-index: 10;
+  }
+
+  .status-flag[data-tooltip]:hover::after {
+    opacity: 1;
+  }
+
+  /* ===== テストモード画面 ===== */
+  .test-content {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 85px 15px 40px;
+  }
+
+  .test-progress {
+    text-align: center;
+    color: #718096;
+    font-size: 0.95em;
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+
+  .test-card {
+    background: white;
+    border-radius: 12px;
+    padding: 28px 24px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.15s;
+  }
+
+  .test-card:active {
+    transform: scale(0.99);
+  }
+
+  .test-card .question-number {
+    margin-bottom: 12px;
+  }
+
+  .test-japanese {
+    font-size: 1.2em;
+    color: #2d3748;
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .test-english-area {
+    min-height: 3em;
+    font-size: 1.15em;
+    color: #2c5282;
+    font-weight: 500;
+    padding-top: 12px;
+    border-top: 1px dashed #e2e8f0;
+    visibility: hidden;
+  }
+
+  .test-english-area.visible {
+    visibility: visible;
+  }
+
+  .test-hint {
+    text-align: center;
+    color: #a0aec0;
+    font-size: 0.9em;
+    margin-top: 12px;
+    font-style: italic;
+  }
+
+  .answer-buttons {
+    display: none;
+    gap: 8px;
+    margin-top: 20px;
+  }
+
+  .answer-buttons.visible {
+    display: flex;
+  }
+
+  .answer-button {
+    flex: 1;
+    padding: 14px 8px;
+    font-size: 1em;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.15s, opacity 0.15s;
+    color: white;
+  }
+
+  .answer-button:active {
+    transform: scale(0.96);
+  }
+
+  .btn-wrong   { background: #e53e3e; }
+  .btn-unsure  { background: #d69e2e; }
+  .btn-correct { background: #38a169; }
+
+  /* テスト完了画面 */
+  .test-finish {
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .test-finish h2 {
+    color: #2c5282;
+    margin-bottom: 16px;
+  }
+
+  .test-finish .summary {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    text-align: left;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #edf2f7;
+  }
+
+  .summary-row:last-child {
+    border-bottom: none;
+  }
+
+  .summary-row .count {
+    font-weight: 600;
+    font-size: 1.1em;
+  }
+</style>
+</head>
+<body>
+
+<!-- ホーム画面 -->
+<div id="homeScreen" class="home-container">
+  <h1>瞬間英作文トレーニング</h1>
+
+  <div class="card">
+    <div class="field">
+      <label class="field-label">出題範囲</label>
+      <div class="value-display">
+        <span id="rangeStart">1</span>番 〜 <span id="rangeEnd">30</span>番
+      </div>
+      <div class="slider-wrapper">
+        <div class="slider-track"></div>
+        <div class="slider-range" id="rangeSliderBar"></div>
+        <input type="range" id="minSlider" min="1" max="100" value="1">
+        <input type="range" id="maxSlider" min="1" max="100" value="30">
+      </div>
+      <div class="slider-endpoints">
+        <span>1</span>
+        <span>100</span>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="field-label">出題数</label>
+      <div class="value-display">
+        <span id="countDisplay">10</span> 問
+      </div>
+      <div class="slider-wrapper single">
+        <div class="slider-track"></div>
+        <div class="slider-range" id="countSliderBar"></div>
+        <input type="range" id="countSlider" min="1" max="30" value="10">
+      </div>
+      <div class="slider-endpoints">
+        <span>1</span>
+        <span id="countMaxLabel">30</span>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="checkbox-wrapper" id="shuffleCheckWrapper">
+        <input type="checkbox" id="shuffleCheck">
+        <span>ランダムに並び替える</span>
+      </label>
+    </div>
+
+    <div class="field">
+      <label class="checkbox-wrapper">
+        <input type="checkbox" id="testModeCheck">
+        <span>テストモード</span>
+      </label>
+    </div>
+
+    <!-- テストモード時だけ表示される追加オプション -->
+    <div class="field test-only-field" id="priorityField">
+      <label class="checkbox-wrapper">
+        <input type="checkbox" id="priorityCheck">
+        <span>間違えやすい問題を優先する</span>
+      </label>
+      <p class="test-only-hint">
+        苦手の問題ほど出題されやすくなります。
+      </p>
+    </div>
+
+    <button class="start-button" id="startButton">学習開始</button>
+    <button class="reset-link" id="resetDataButton">学習データをリセット</button>
+  </div>
+</div>
+
+<!-- 学習画面 -->
+<div id="studyScreen" class="study-screen">
+  <div class="study-header">
+    <button class="header-button hide-all-button" id="hideAllButton">英文をすべて隠す</button>
+    <button class="header-button end-button" id="endStudyButton">終了</button>
+  </div>
+  <div class="study-content" id="studyContent"></div>
+</div>
+
+<!-- テスト画面 -->
+<div id="testScreen" class="test-screen">
+  <div class="study-header">
+    <button class="header-button end-button" id="endTestButton" style="max-width: 100%;">終了</button>
+  </div>
+  <div class="test-content" id="testContent"></div>
+</div>
+
+<script>
+  // ===== 例文データ（100個） =====
+  const sentences = [
+    { id: 1,   ja: "彼女は君の妹？",                               en: "Is she your sister?" },
+    { id: 2,   ja: "これ、君のペン？",                             en: "Is this your pen?" },
+    { id: 3,   ja: "あれは何？",                                   en: "What is that?" },
+    { id: 4,   ja: "私は学生です。",                               en: "I am a student." },
+    { id: 5,   ja: "お腹すいた？",                                 en: "Are you hungry?" },
+    { id: 6,   ja: "彼は私の友達だよ。",                           en: "He is my friend." },
+    { id: 7,   ja: "今日は暑いね。",                               en: "It's hot today." },
+    { id: 8,   ja: "彼女は忙しくないよ。",                         en: "She isn't busy." },
+    { id: 9,   ja: "どこにいるの？",                               en: "Where are you?" },
+    { id: 10,  ja: "コーヒー、飲む？",                             en: "Do you drink coffee?" },
+    { id: 11,  ja: "昨日は暇だった？",                             en: "Were you free yesterday?" },
+    { id: 12,  ja: "私はリンゴが好きじゃない。",                   en: "I don't like apples." },
+    { id: 13,  ja: "彼は英語を話すよ。",                           en: "He speaks English." },
+    { id: 14,  ja: "鍵はカバンの中だよ。",                         en: "The keys are in the bag." },
+    { id: 15,  ja: "ピアノ、弾ける？",                             en: "Can you play the piano?" },
+    { id: 16,  ja: "何してるの？",                                 en: "What are you doing?" },
+    { id: 17,  ja: "昨日の夜、何したの？",                         en: "What did you do last night?" },
+    { id: 18,  ja: "ちょっと待って。",                             en: "Wait a minute." },
+    { id: 19,  ja: "昨日はどこに行ったの？",                       en: "Where did you go yesterday?" },
+    { id: 20,  ja: "窓、開けてもいい？",                           en: "Can I open the window?" },
+    { id: 21,  ja: "彼はここにいないよ。",                         en: "He isn't here." },
+    { id: 22,  ja: "これ、使ってもいい？",                         en: "Can I use this?" },
+    { id: 23,  ja: "テレビ消してくれる？",                         en: "Can you turn off the TV?" },
+    { id: 24,  ja: "彼は今、寝てるよ。",                           en: "He is sleeping now." },
+    { id: 25,  ja: "昨日は仕事に行かなかった。",                   en: "I didn't go to work yesterday." },
+    { id: 26,  ja: "何か手伝おうか？",                             en: "Shall I help you?" },
+    { id: 27,  ja: "お散歩行きたいな。",                           en: "I want to go for a walk." },
+    { id: 28,  ja: "新しい服を買いたい。",                         en: "I want to buy new clothes." },
+    { id: 29,  ja: "彼は何て言ったの？",                           en: "What did he say?" },
+    { id: 30,  ja: "ここに座ってもいい？",                         en: "Can I sit here?" },
+    { id: 31,  ja: "明日、彼に電話するね。",                       en: "I will call him tomorrow." },
+    { id: 32,  ja: "早く起きなきゃ。",                             en: "I have to get up early." },
+    { id: 33,  ja: "靴を脱がなくてもいいよ。",                     en: "You don't have to take off your shoes." },
+    { id: 34,  ja: "もう行かなきゃ。",                             en: "I must go now." },
+    { id: 35,  ja: "彼、私より背が高いんだ。",                     en: "He is taller than me." },
+    { id: 36,  ja: "これが一番好き。",                             en: "I like this the best." },
+    { id: 37,  ja: "昨日は雨が降ってた。",                         en: "It was raining yesterday." },
+    { id: 38,  ja: "彼女、来るかなぁ。",                           en: "I hope she comes." },
+    { id: 39,  ja: "疲れてたから早く寝たよ。",                     en: "I went to bed early because I was tired." },
+    { id: 40,  ja: "晴れたら公園に行こう。",                       en: "If it's sunny, let's go to the park." },
+    { id: 41,  ja: "家に着いたら連絡して。",                       en: "Call me when you get home." },
+    { id: 42,  ja: "彼はとても親切だと思う。",                     en: "I think he is very kind." },
+    { id: 43,  ja: "何か飲むものが欲しい。",                       en: "I want something to drink." },
+    { id: 44,  ja: "宿題、終わった？",                             en: "Have you finished your homework?" },
+    { id: 45,  ja: "まだ彼に会ってないんだ。",                     en: "I haven't seen him yet." },
+    { id: 46,  ja: "英語を話すのは難しい。",                       en: "It is difficult to speak English." },
+    { id: 47,  ja: "彼にメールするの忘れた。",                     en: "I forgot to email him." },
+    { id: 48,  ja: "また会えるのが楽しみ。",                       en: "I'm looking forward to seeing you again." },
+    { id: 49,  ja: "映画を見るのが好きです。",                     en: "I like watching movies." },
+    { id: 50,  ja: "窓を閉めてくれる？",                           en: "Could you close the window?" },
+    { id: 51,  ja: "準備ができたら教えて。",                       en: "Let me know when you are ready." },
+    { id: 52,  ja: "ここにどのくらいいるの？",                     en: "How long have you been here?" },
+    { id: 53,  ja: "彼はもう帰っちゃったよ。",                     en: "He has already gone home." },
+    { id: 54,  ja: "日本に来たことある？",                         en: "Have you ever been to Japan?" },
+    { id: 55,  ja: "京都に2回行ったことあるよ。",                  en: "I have been to Kyoto twice." },
+    { id: 56,  ja: "子供の時から彼を知ってるよ",                   en: "I have known him since I was a child." },
+    { id: 57,  ja: "このケーキ、彼女が作ったんだよ。",             en: "This cake was made by her." },
+    { id: 58,  ja: "お医者さんに診てもらったほうがいいよ。",       en: "You had better see a doctor." },
+    { id: 59,  ja: "砂糖を取ってくれる？",                         en: "Will you pass me the sugar?" },
+    { id: 60,  ja: "彼がどこにいるか知らない。",                   en: "I don't know where he is." },
+    { id: 61,  ja: "何をすればいいかわからない。",                 en: "I don't know what to do." },
+    { id: 62,  ja: "ドアを閉めてもいいですか？",                   en: "Do you mind if I close the door?" },
+    { id: 63,  ja: "窓を閉めてもらえますか？",                     en: "Would you mind closing the window?" },
+    { id: 64,  ja: "彼は忙しすぎて旅行に行けない。",               en: "He is too busy to go on a trip." },
+    { id: 65,  ja: "彼に「こっちにおいで」って言われた。",         en: "He told me to come here." },
+    { id: 66,  ja: "お母さんに部屋の掃除をさせられた。",           en: "My mother made me clean my room." },
+    { id: 67,  ja: "彼女に本当のことを言ってほしい。",             en: "I want her to tell the truth." },
+    { id: 68,  ja: "昨日買ったカバン、失くしちゃった。",           en: "I lost the bag I bought yesterday." },
+    { id: 69,  ja: "赤いシャツを着てる人は誰？",                   en: "Who is the person wearing a red shirt?" },
+    { id: 70,  ja: "もっとお金があればなぁ。",                     en: "I wish I had more money." },
+    { id: 71,  ja: "もし私が君なら、そんなことしないよ。",         en: "If I were you, I wouldn't do that." },
+    { id: 72,  ja: "いつからここで働いてるの？",                   en: "How long have you been working here?" },
+    { id: 73,  ja: "そこに行くのにどのくらいかかる？",             en: "How long does it take to get there?" },
+    { id: 74,  ja: "駅まで送ってくれない？",                       en: "Could you give me a ride to the station?" },
+    { id: 75,  ja: "私の言ってることわかる？",                     en: "Do you know what I mean?" },
+    { id: 76,  ja: "何が起きたのか教えて。",                       en: "Tell me what happened." },
+    { id: 77,  ja: "それをどこで買ったか覚えてない。",             en: "I don't remember where I bought it." },
+    { id: 78,  ja: "昨日の夜、誰と電話してたの？",                 en: "Who were you talking to on the phone last night?" },
+    { id: 79,  ja: "どうしてそんなに怒ってるの？",                 en: "What makes you so angry?" },
+    { id: 80,  ja: "コーヒーのおかわり、いかがですか？",           en: "Would you like another cup of coffee?" },
+    { id: 81,  ja: "おすすめのレストラン、ある？",                 en: "Do you have any recommended restaurants?" },
+    { id: 82,  ja: "準備ができたら教えてね。",                     en: "Let me know when you are ready." },
+    { id: 83,  ja: "彼は今、忙しいに違いないよ。",                 en: "He must be busy right now." },
+    { id: 84,  ja: "もっと練習したほうがいいよ。",                 en: "You should practice more." },
+    { id: 85,  ja: "それ、本気で言ってるの？",                     en: "Are you serious about that?" },
+    { id: 86,  ja: "傘を持ってくるの忘れちゃった。",               en: "I forgot to bring my umbrella." },
+    { id: 87,  ja: "彼が来るまで、ここで待とう。",                 en: "Let's wait here until he comes." },
+    { id: 88,  ja: "昨日はすごく疲れてて、すぐ寝ちゃった。",       en: "I was so tired yesterday that I went to sleep right away." },
+    { id: 89,  ja: "彼女に本当のことを言うべきかな？",             en: "Do you think I should tell her the truth?" },
+    { id: 90,  ja: "いつか海外で働いてみたいんだ。",               en: "I want to work abroad someday." },
+    { id: 91,  ja: "駅まで送っていくよ。",                         en: "I'll give you a ride to the station." },
+    { id: 92,  ja: "昨日は飲みすぎちゃった。",                     en: "I drank too much last night." },
+    { id: 93,  ja: "彼はもう、ここには住んでいないよ。",           en: "He doesn't live here anymore." },
+    { id: 94,  ja: "何がおかしいのか教えてくれる？",               en: "Can you tell me what's so funny?" },
+    { id: 95,  ja: "明日までにこれを終わらせなきゃ。",             en: "I have to finish this by tomorrow." },
+    { id: 96,  ja: "ずっと君に言おうと思ってたんだ。",             en: "I've been meaning to tell you." },
+    { id: 97,  ja: "何を頼むか、もう決めた？",                     en: "Have you decided what to order?" },
+    { id: 98,  ja: "彼とはもう5年も会ってないんだ。",              en: "I haven't seen him for five years." },
+    { id: 99,  ja: "今の仕事、どのくらい続けてるの？",             en: "How long have you been doing your current job?" },
+    { id: 100, ja: "この国には、どのくらい住んでるんですか？",     en: "How long have you lived in this country?" }
+  ];
+
+  // ===== 学習データの保存・取得 =====
+  const STORAGE_KEY = 'englishTrainingStats_v1';
+  const HISTORY_LIMIT = 5;
+
+  function loadStats() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function saveStats(stats) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(stats));
+    } catch (e) {
+      console.warn('保存に失敗しました', e);
+    }
+  }
+
+  function recordAnswer(id, result) {
+    const stats = loadStats();
+    if (!stats[id]) {
+      stats[id] = { history: [], lastResult: null, updatedAt: 0 };
+    }
+    stats[id].history.push(result);
+    if (stats[id].history.length > HISTORY_LIMIT) {
+      stats[id].history = stats[id].history.slice(-HISTORY_LIMIT);
+    }
+    stats[id].lastResult = result;
+    stats[id].updatedAt = Date.now();
+    saveStats(stats);
+  }
+
+  function getFlagState(id) {
+    const stats = loadStats();
+    const entry = stats[id];
+    if (!entry || !entry.history || entry.history.length === 0) {
+      return { cls: 'unlearned', tooltip: '未学習' };
+    }
+    const history = entry.history;
+    const last = history[history.length - 1];
+    const correctCount = history.filter(r => r === 'correct').length;
+    const rate = Math.round((correctCount / history.length) * 100);
+
+    if (last === 'wrong') {
+      return { cls: 'red', tooltip: `直近: 不正解 / 正答率 ${rate}%` };
+    }
+    if (last === 'unsure') {
+      return { cls: 'yellow', tooltip: `直近: 微妙 / 正答率 ${rate}%` };
+    }
+    const lastTwo = history.slice(-2);
+    if (lastTwo.length >= 2 && lastTwo.every(r => r === 'correct')) {
+      return { cls: 'green', tooltip: `直近: 正解 / 正答率 ${rate}%` };
+    }
+    return { cls: 'yellow', tooltip: `直近: 正解(要反復) / 正答率 ${rate}%` };
+  }
+
+  /**
+   * 問題ごとの重み(選ばれやすさ)を返す。
+   * フラグ状態をもとに算出する。
+   */
+  function getWeight(id) {
+    const flag = getFlagState(id);
+    switch (flag.cls) {
+      case 'red':       return 5; // 不正解: 最優先
+      case 'yellow':    return 3; // 微妙: やや優先
+      case 'unlearned': return 2; // 未学習: 新規として適度に
+      case 'green':     return 1; // 習得済み: たまに復習
+      default:          return 1;
+    }
+  }
+
+  /**
+   * 重み付きランダムで、範囲内から指定数の問題を重複なしで抽出する。
+   * 重みが大きい問題ほど選ばれやすいが、すべての問題に出題される可能性がある。
+   */
+  function weightedSample(pool, count) {
+    const candidates = pool.map(item => ({ item, weight: getWeight(item.id) }));
+    const selected = [];
+    // 元の配列を壊さないようにコピー
+    let remaining = [...candidates];
+
+    for (let i = 0; i < count && remaining.length > 0; i++) {
+      const totalWeight = remaining.reduce((sum, c) => sum + c.weight, 0);
+      let r = Math.random() * totalWeight;
+      let pickedIdx = 0;
+      for (let j = 0; j < remaining.length; j++) {
+        r -= remaining[j].weight;
+        if (r <= 0) {
+          pickedIdx = j;
+          break;
+        }
+      }
+      selected.push(remaining[pickedIdx].item);
+      remaining.splice(pickedIdx, 1);
+    }
+    // ID順に並べ替えて返す(ランダムシャッフルと併用されない前提で自然な順序に)
+    return selected.sort((a, b) => a.id - b.id);
+  }
+
+  // ===== 範囲スライダー =====
+  const minSlider = document.getElementById('minSlider');
+  const maxSlider = document.getElementById('maxSlider');
+  const rangeStartEl = document.getElementById('rangeStart');
+  const rangeEndEl = document.getElementById('rangeEnd');
+  const rangeSliderBar = document.getElementById('rangeSliderBar');
+  const SLIDER_MIN = 1;
+  const SLIDER_MAX = 100;
+
+  function getRange() {
+    let minVal = parseInt(minSlider.value);
+    let maxVal = parseInt(maxSlider.value);
+    if (minVal > maxVal) [minVal, maxVal] = [maxVal, minVal];
+    return { min: minVal, max: maxVal };
+  }
+
+  function updateRangeDisplay() {
+    const { min, max } = getRange();
+    rangeStartEl.textContent = min;
+    rangeEndEl.textContent = max;
+    const minPercent = ((min - SLIDER_MIN) / (SLIDER_MAX - SLIDER_MIN)) * 100;
+    const maxPercent = ((max - SLIDER_MIN) / (SLIDER_MAX - SLIDER_MIN)) * 100;
+    rangeSliderBar.style.left = minPercent + '%';
+    rangeSliderBar.style.width = (maxPercent - minPercent) + '%';
+  }
+
+  // ===== 出題数スライダー =====
+  const countSlider = document.getElementById('countSlider');
+  const countDisplay = document.getElementById('countDisplay');
+  const countSliderBar = document.getElementById('countSliderBar');
+  const countMaxLabel = document.getElementById('countMaxLabel');
+
+  function updateCountDisplay() {
+    const val = parseInt(countSlider.value);
+    const max = parseInt(countSlider.max);
+    countDisplay.textContent = val;
+    const percent = max > 1 ? ((val - 1) / (max - 1)) * 100 : 100;
+    countSliderBar.style.left = '0%';
+    countSliderBar.style.width = percent + '%';
+  }
+
+  function syncCountSliderToRange() {
+    const { min, max } = getRange();
+    const rangeSize = max - min + 1;
+    const currentVal = parseInt(countSlider.value);
+    countSlider.max = rangeSize;
+    countMaxLabel.textContent = rangeSize;
+    if (currentVal > rangeSize) {
+      countSlider.value = rangeSize;
+    }
+    updateCountDisplay();
+  }
+
+  minSlider.addEventListener('input', () => {
+    if (parseInt(minSlider.value) > parseInt(maxSlider.value)) {
+      minSlider.value = maxSlider.value;
+    }
+    updateRangeDisplay();
+    syncCountSliderToRange();
+  });
+
+  maxSlider.addEventListener('input', () => {
+    if (parseInt(maxSlider.value) < parseInt(minSlider.value)) {
+      maxSlider.value = minSlider.value;
+    }
+    updateRangeDisplay();
+    syncCountSliderToRange();
+  });
+
+  countSlider.addEventListener('input', updateCountDisplay);
+
+  updateRangeDisplay();
+  syncCountSliderToRange();
+
+  // ===== テストモード切り替え =====
+  const testModeCheck = document.getElementById('testModeCheck');
+  const priorityField = document.getElementById('priorityField');
+  const priorityCheck = document.getElementById('priorityCheck');
+  const shuffleCheck = document.getElementById('shuffleCheck');
+  const shuffleCheckWrapper = document.getElementById('shuffleCheckWrapper');
+  const startButton = document.getElementById('startButton');
+
+  function updateUIForMode() {
+    if (testModeCheck.checked) {
+      startButton.textContent = 'テスト開始';
+      startButton.classList.add('test-mode');
+      priorityField.classList.add('active');
+    } else {
+      startButton.textContent = '学習開始';
+      startButton.classList.remove('test-mode');
+      priorityField.classList.remove('active');
+      priorityCheck.checked = false;
+    }
+    updateShuffleState();
+  }
+
+  /**
+   * 「間違えやすい問題を優先」がONのときは、
+   * 並び替えの挙動がそれに含まれるのでシャッフルは無効化して混乱を避ける。
+   */
+  function updateShuffleState() {
+    if (priorityCheck.checked) {
+      shuffleCheck.checked = false;
+      shuffleCheck.disabled = true;
+      shuffleCheckWrapper.classList.add('disabled');
+    } else {
+      shuffleCheck.disabled = false;
+      shuffleCheckWrapper.classList.remove('disabled');
+    }
+  }
+
+  testModeCheck.addEventListener('change', updateUIForMode);
+  priorityCheck.addEventListener('change', updateShuffleState);
+
+  // ===== 開始処理 =====
+  const homeScreen = document.getElementById('homeScreen');
+  const studyScreen = document.getElementById('studyScreen');
+  const testScreen = document.getElementById('testScreen');
+  const studyContent = document.getElementById('studyContent');
+  const testContent = document.getElementById('testContent');
+
+  startButton.addEventListener('click', () => {
+    const { min, max } = getRange();
+    const count = parseInt(countSlider.value);
+
+    const pool = sentences.filter(s => s.id >= min && s.id <= max);
+    let selected;
+
+    if (testModeCheck.checked && priorityCheck.checked) {
+      // 間違えやすい問題を優先(重み付き抽選)
+      selected = weightedSample(pool, count);
+    } else if (shuffleCheck.checked) {
+      selected = shuffleArray(pool).slice(0, count);
+    } else {
+      selected = pool.slice(0, count);
+    }
+
+    if (testModeCheck.checked) {
+      startTestMode(selected);
+    } else {
+      startStudyMode(selected);
+    }
+  });
+
+  function shuffleArray(arr) {
+    const copy = [...arr];
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+  }
+
+  // ===== 学習モード =====
+  function startStudyMode(list) {
+    renderStudyScreen(list);
+    homeScreen.style.display = 'none';
+    studyScreen.style.display = 'block';
+    testScreen.style.display = 'none';
+    window.scrollTo(0, 0);
+  }
+
+  function renderStudyScreen(list) {
+    studyContent.innerHTML = '';
+    list.forEach(item => {
+      const flag = getFlagState(item.id);
+      const div = document.createElement('div');
+      div.className = 'question-item';
+      div.innerHTML = `
+        <span class="status-flag ${flag.cls}" data-tooltip="${flag.tooltip}"></span>
+        <div class="question-number">No. ${item.id}</div>
+        <div class="japanese-text">${escapeHtml(item.ja)}</div>
+        <div class="english-area">${escapeHtml(item.en)}</div>
+      `;
+      div.addEventListener('click', (e) => {
+        if (e.target.classList.contains('status-flag')) return;
+        div.querySelector('.english-area').classList.toggle('visible');
+      });
+      studyContent.appendChild(div);
+    });
+  }
+
+  document.getElementById('hideAllButton').addEventListener('click', () => {
+    document.querySelectorAll('#studyContent .english-area.visible').forEach(el => {
+      el.classList.remove('visible');
+    });
+  });
+
+  document.getElementById('endStudyButton').addEventListener('click', () => {
+    studyScreen.style.display = 'none';
+    homeScreen.style.display = 'block';
+    window.scrollTo(0, 0);
+  });
+
+  // ===== テストモード =====
+  let testList = [];
+  let testIndex = 0;
+  let testResults = [];
+
+  function startTestMode(list) {
+    testList = list;
+    testIndex = 0;
+    testResults = [];
+    homeScreen.style.display = 'none';
+    studyScreen.style.display = 'none';
+    testScreen.style.display = 'block';
+    window.scrollTo(0, 0);
+    renderTestQuestion();
+  }
+
+  function renderTestQuestion() {
+    if (testIndex >= testList.length) {
+      renderTestFinish();
+      return;
+    }
+    const item = testList[testIndex];
+    const flag = getFlagState(item.id);
+    testContent.innerHTML = `
+      <div class="test-progress">${testIndex + 1} / ${testList.length} 問目</div>
+      <div class="test-card" id="testCard">
+        <span class="status-flag ${flag.cls}"></span>
+        <div class="question-number">No. ${item.id}</div>
+        <div class="test-japanese">${escapeHtml(item.ja)}</div>
+        <div class="test-english-area" id="testEnglishArea">${escapeHtml(item.en)}</div>
+        <div class="test-hint" id="testHint">タップして答えを表示</div>
+        <div class="answer-buttons" id="answerButtons">
+          <button class="answer-button btn-wrong"   data-result="wrong">不正解</button>
+          <button class="answer-button btn-unsure"  data-result="unsure">微妙</button>
+          <button class="answer-button btn-correct" data-result="correct">正解</button>
+        </div>
+      </div>
+    `;
+
+    const card = document.getElementById('testCard');
+    const englishArea = document.getElementById('testEnglishArea');
+    const hint = document.getElementById('testHint');
+    const answerButtons = document.getElementById('answerButtons');
+
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('.answer-button')) return;
+      if (!englishArea.classList.contains('visible')) {
+        englishArea.classList.add('visible');
+        hint.style.display = 'none';
+        answerButtons.classList.add('visible');
+      }
+    });
+
+    answerButtons.querySelectorAll('.answer-button').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const result = btn.dataset.result;
+        recordAnswer(item.id, result);
+        testResults.push({ id: item.id, result });
+        testIndex++;
+        renderTestQuestion();
+      });
+    });
+  }
+
+  function renderTestFinish() {
+    const correct = testResults.filter(r => r.result === 'correct').length;
+    const unsure  = testResults.filter(r => r.result === 'unsure').length;
+    const wrong   = testResults.filter(r => r.result === 'wrong').length;
+    const total   = testResults.length;
+
+    testContent.innerHTML = `
+      <div class="test-finish">
+        <h2>お疲れさまでした！</h2>
+        <div class="summary">
+          <div class="summary-row">
+            <span>全 ${total} 問中</span>
+          </div>
+          <div class="summary-row">
+            <span style="color: #38a169;">✓ 正解</span>
+            <span class="count">${correct} 問</span>
+          </div>
+          <div class="summary-row">
+            <span style="color: #d69e2e;">△ 微妙</span>
+            <span class="count">${unsure} 問</span>
+          </div>
+          <div class="summary-row">
+            <span style="color: #e53e3e;">✗ 不正解</span>
+            <span class="count">${wrong} 問</span>
+          </div>
+        </div>
+        <button class="start-button" id="finishBackButton">範囲選択に戻る</button>
+      </div>
+    `;
+    document.getElementById('finishBackButton').addEventListener('click', backToHome);
+  }
+
+  function backToHome() {
+    testScreen.style.display = 'none';
+    homeScreen.style.display = 'block';
+    window.scrollTo(0, 0);
+  }
+
+  document.getElementById('endTestButton').addEventListener('click', () => {
+    if (testIndex < testList.length && testResults.length < testList.length) {
+      if (!confirm('テストを中断しますか？ここまでの回答は保存されます。')) {
+        return;
+      }
+    }
+    backToHome();
+  });
+
+  // ===== データリセット =====
+  document.getElementById('resetDataButton').addEventListener('click', () => {
+    if (confirm('蓄積された学習データをすべて削除しますか？この操作は取り消せません。')) {
+      localStorage.removeItem(STORAGE_KEY);
+      alert('学習データをリセットしました。');
+    }
+  });
+
+  // ===== 共通 =====
+  function escapeHtml(str) {
+    return str.replace(/[&<>"']/g, c => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+  }
+</script>
+
+</body>
+</html>
