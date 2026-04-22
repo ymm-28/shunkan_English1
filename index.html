@@ -2,8 +2,19 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>瞬間英作文トレーニング</title>
+
+<!-- PWA: マニフェスト(インライン) -->
+<link rel="manifest" href='data:application/manifest+json,{"name":"瞬間英作文トレーニング","short_name":"英作文","start_url":".","display":"standalone","background_color":"%23f4f6f9","theme_color":"%234299e1","orientation":"portrait","icons":[{"src":"data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 192 192%22%3E%3Crect width=%22192%22 height=%22192%22 rx=%2240%22 fill=%22%234299e1%22/%3E%3Ctext x=%2296%22 y=%22128%22 font-size=%22110%22 font-weight=%22700%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22system-ui,sans-serif%22%3EE%3C/text%3E%3C/svg%3E","sizes":"192x192","type":"image/svg+xml","purpose":"any maskable"},{"src":"data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22%3E%3Crect width=%22512%22 height=%22512%22 rx=%22110%22 fill=%22%234299e1%22/%3E%3Ctext x=%22256%22 y=%22340%22 font-size=%22290%22 font-weight=%22700%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22system-ui,sans-serif%22%3EE%3C/text%3E%3C/svg%3E","sizes":"512x512","type":"image/svg+xml","purpose":"any maskable"}]}'>
+
+<!-- PWA: iOS対応 -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="英作文">
+<meta name="theme-color" content="#4299e1">
+<link rel="apple-touch-icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180"><rect width="180" height="180" rx="38" fill="%234299e1"/><text x="90" y="120" font-size="105" font-weight="700" text-anchor="middle" fill="white" font-family="system-ui,sans-serif">E</text></svg>'>
+
 <style>
   * {
     box-sizing: border-box;
@@ -17,6 +28,11 @@
     color: #333;
     min-height: 100vh;
     line-height: 1.6;
+    /* PWA化時のセーフエリア対応(iPhoneのノッチ・ホームインジケーター) */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
   }
 
   /* ===== ホーム画面 ===== */
@@ -29,8 +45,16 @@
   .home-container h1 {
     text-align: center;
     color: #2c5282;
-    margin-bottom: 30px;
+    margin-bottom: 6px;
     font-size: 1.8em;
+  }
+
+  .home-subtitle {
+    text-align: center;
+    color: #718096;
+    font-size: 1em;
+    margin-bottom: 30px;
+    font-weight: 500;
   }
 
   .card {
@@ -252,6 +276,10 @@
     background: white;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     padding: 12px 15px;
+    /* セーフエリア分を上に追加(iPhoneの時計・ノッチと干渉しないように) */
+    padding-top: calc(12px + env(safe-area-inset-top));
+    padding-left: calc(15px + env(safe-area-inset-left));
+    padding-right: calc(15px + env(safe-area-inset-right));
     z-index: 100;
     display: flex;
     gap: 10px;
@@ -292,7 +320,7 @@
   .study-content {
     max-width: 700px;
     margin: 0 auto;
-    padding: 85px 15px 40px;
+    padding: calc(85px + env(safe-area-inset-top)) 15px 40px;
   }
 
   .question-item {
@@ -383,7 +411,7 @@
   .test-content {
     max-width: 700px;
     margin: 0 auto;
-    padding: 85px 15px 40px;
+    padding: calc(85px + env(safe-area-inset-top)) 15px 40px;
   }
 
   .test-progress {
@@ -515,6 +543,7 @@
 <!-- ホーム画面 -->
 <div id="homeScreen" class="home-container">
   <h1>瞬間英作文トレーニング</h1>
+  <p class="home-subtitle">日常会話 初級編</p>
 
   <div class="card">
     <div class="field">
@@ -598,16 +627,16 @@
   // ===== 例文データ（100個） =====
   const sentences = [
     // Level 1 (1-10): 3語文中心・be動詞・基本
-    { id: 1,   ja: "彼女は学生です。",                             en: "She is a student." },
+    { id: 1,   ja: "彼女は学生です。",                             en: "She's a student." },
     { id: 2,   ja: "これはペンです。",                             en: "This is a pen." },
-    { id: 3,   ja: "私は日本人です。",                             en: "I am Japanese." },
-    { id: 4,   ja: "今日は暑いです。",                             en: "It is hot today." },
-    { id: 5,   ja: "彼は親切です。",                               en: "He is kind." },
+    { id: 3,   ja: "私は日本人です。",                             en: "I'm Japanese." },
+    { id: 4,   ja: "今日は暑いです。",                             en: "It's hot today." },
+    { id: 5,   ja: "彼は親切です。",                               en: "He's kind." },
     { id: 6,   ja: "お腹が空いていますか？",                       en: "Are you hungry?" },
-    { id: 7,   ja: "彼らは忙しいです。",                           en: "They are busy." },
-    { id: 8,   ja: "私は疲れています。",                           en: "I am tired." },
+    { id: 7,   ja: "彼らは忙しいです。",                           en: "They're busy." },
+    { id: 8,   ja: "私は疲れています。",                           en: "I'm tired." },
     { id: 9,   ja: "この本は面白いです。",                         en: "This book is interesting." },
-    { id: 10,  ja: "彼女は私の姉です。",                           en: "She is my sister." },
+    { id: 10,  ja: "彼女は私の姉です。",                           en: "She's my sister." },
 
     // Level 2 (11-20): 一般動詞・基本の疑問文と否定文
     { id: 11,  ja: "私は毎日コーヒーを飲みます。",                 en: "I drink coffee every day." },
@@ -624,57 +653,57 @@
     // Level 3 (21-30): 助動詞(can)・進行形・過去形
     { id: 21,  ja: "あなたはピアノを弾けますか？",                 en: "Can you play the piano?" },
     { id: 22,  ja: "窓を開けてもいいですか？",                     en: "Can I open the window?" },
-    { id: 23,  ja: "彼は今、寝ています。",                         en: "He is sleeping now." },
+    { id: 23,  ja: "彼は今、寝ています。",                         en: "He's sleeping now." },
     { id: 24,  ja: "あなたは何をしていますか？",                   en: "What are you doing?" },
     { id: 25,  ja: "私は昨日、映画を見ました。",                   en: "I watched a movie yesterday." },
     { id: 26,  ja: "あなたは昨夜、何をしましたか?",                en: "What did you do last night?" },
     { id: 27,  ja: "私は昨日、仕事に行きませんでした。",           en: "I didn't go to work yesterday." },
     { id: 28,  ja: "彼は何と言いましたか？",                       en: "What did he say?" },
-    { id: 29,  ja: "私は新しい服を買いたいです。",                 en: "I want to buy new clothes." },
+    { id: 29,  ja: "私は新しい服を買いたいです。",                 en: "I want to buy some new clothes." },
     { id: 30,  ja: "ここに座ってもいいですか？",                   en: "Can I sit here?" },
 
     // Level 4 (31-40): have to/must・比較・理由・条件
     { id: 31,  ja: "私は早く起きなければなりません。",             en: "I have to get up early." },
     { id: 32,  ja: "あなたは靴を脱ぐ必要はありません。",           en: "You don't have to take off your shoes." },
-    { id: 33,  ja: "私はもう行かなければなりません。",             en: "I must go now." },
-    { id: 34,  ja: "彼は私より背が高いです。",                     en: "He is taller than me." },
-    { id: 35,  ja: "これが全部の中で一番好きです。",               en: "I like this the best of all." },
+    { id: 33,  ja: "私はもう行かなければなりません。",             en: "I have to go now." },
+    { id: 34,  ja: "彼は私より背が高いです。",                     en: "He's taller than me." },
+    { id: 35,  ja: "これが全部の中で一番好きです。",               en: "I like this one the best." },
     { id: 36,  ja: "昨日は雨が降っていました。",                   en: "It was raining yesterday." },
     { id: 37,  ja: "疲れていたので、早く寝ました。",               en: "I went to bed early because I was tired." },
     { id: 38,  ja: "晴れたら公園に行きましょう。",                 en: "If it's sunny, let's go to the park." },
     { id: 39,  ja: "家に着いたら連絡してください。",               en: "Call me when you get home." },
-    { id: 40,  ja: "彼はとても親切だと思います。",                 en: "I think he is very kind." },
+    { id: 40,  ja: "彼はとても親切だと思います。",                 en: "I think he's really kind." },
 
     // Level 5 (41-50): 現在完了・不定詞/動名詞・丁寧表現
-    { id: 41,  ja: "何か飲み物がほしいです。",                     en: "I want something to drink." },
+    { id: 41,  ja: "何か飲み物がほしいです。",                     en: "I'd like something to drink." },
     { id: 42,  ja: "宿題はもう終わりましたか？",                   en: "Have you finished your homework?" },
     { id: 43,  ja: "私はまだ彼に会っていません。",                 en: "I haven't seen him yet." },
-    { id: 44,  ja: "英語を話すのは難しいです。",                   en: "It is difficult to speak English." },
+    { id: 44,  ja: "英語を話すのは難しいです。",                   en: "It's hard to speak English." },
     { id: 45,  ja: "彼にメールするのを忘れました。",               en: "I forgot to email him." },
     { id: 46,  ja: "またあなたに会えるのを楽しみにしています。",   en: "I'm looking forward to seeing you again." },
     { id: 47,  ja: "私は映画を見るのが好きです。",                 en: "I like watching movies." },
-    { id: 48,  ja: "明日、彼に電話するつもりです。",               en: "I will call him tomorrow." },
-    { id: 49,  ja: "何か手伝いましょうか？",                       en: "Shall I help you?" },
+    { id: 48,  ja: "明日、彼に電話するつもりです。",               en: "I'll call him tomorrow." },
+    { id: 49,  ja: "何か手伝いましょうか？",                       en: "Do you want me to help?" },
     { id: 50,  ja: "窓を閉めていただけますか？",                   en: "Could you close the window?" },
-    { id: 51,  ja: "準備ができたら教えてください。",               en: "Let me know when you are ready." },
+    { id: 51,  ja: "準備ができたら教えてください。",               en: "Let me know when you're ready." },
     { id: 52,  ja: "ここにどのくらいいるのですか？",               en: "How long have you been here?" },
-    { id: 53,  ja: "彼はもう家に帰ってしまいました。",             en: "He has already gone home." },
+    { id: 53,  ja: "彼はもう家に帰ってしまいました。",             en: "He's already gone home." },
     { id: 54,  ja: "日本に来たことがありますか？",                 en: "Have you ever been to Japan?" },
-    { id: 55,  ja: "京都に2回行ったことがあります。",              en: "I have been to Kyoto twice." },
-    { id: 56,  ja: "子供の頃から彼を知っています。",               en: "I have known him since I was a child." },
+    { id: 55,  ja: "京都に2回行ったことがあります。",              en: "I've been to Kyoto twice." },
+    { id: 56,  ja: "子供の頃から彼を知っています。",               en: "I've known him since I was a child." },
     { id: 57,  ja: "このケーキは彼女が作ったものです。",           en: "This cake was made by her." },
-    { id: 58,  ja: "お医者さんに診てもらったほうがいいですよ。",   en: "You had better see a doctor." },
-    { id: 59,  ja: "砂糖を取ってもらえますか？",                   en: "Will you pass me the sugar?" },
+    { id: 58,  ja: "お医者さんに診てもらったほうがいいですよ。",   en: "You'd better see a doctor." },
+    { id: 59,  ja: "砂糖を取ってもらえますか？",                   en: "Can you pass me the sugar?" },
     { id: 60,  ja: "彼がどこにいるのか分かりません。",             en: "I don't know where he is." },
     { id: 61,  ja: "何をすればいいのか分かりません。",             en: "I don't know what to do." },
     { id: 62,  ja: "ドアを閉めてもいいですか？",                   en: "Do you mind if I close the door?" },
     { id: 63,  ja: "窓を閉めていただけませんか？",                 en: "Would you mind closing the window?" },
-    { id: 64,  ja: "彼は忙しすぎて旅行に行けません。",             en: "He is too busy to go on a trip." },
-    { id: 65,  ja: "彼は私にこっちに来るように言いました。",       en: "He told me to come here." },
-    { id: 66,  ja: "母は私に部屋の掃除をさせました。",             en: "My mother made me clean my room." },
+    { id: 64,  ja: "彼は忙しすぎて旅行に行けません。",             en: "He's too busy to go on a trip." },
+    { id: 65,  ja: "彼は私にこっちに来るように言いました。",       en: "He told me to come over here." },
+    { id: 66,  ja: "母は私に部屋の掃除をさせました。",             en: "My mom made me clean my room." },
     { id: 67,  ja: "彼女には本当のことを言ってほしいです。",       en: "I want her to tell the truth." },
     { id: 68,  ja: "昨日買ったカバンをなくしてしまいました。",     en: "I lost the bag I bought yesterday." },
-    { id: 69,  ja: "赤いシャツを着ている人は誰ですか？",           en: "Who is the person wearing a red shirt?" },
+    { id: 69,  ja: "赤いシャツを着ている人は誰ですか？",           en: "Who's the person wearing the red shirt?" },
     { id: 70,  ja: "もっとお金があればいいのに。",                 en: "I wish I had more money." },
     { id: 71,  ja: "もし私があなたなら、そんなことはしません。",   en: "If I were you, I wouldn't do that." },
     { id: 72,  ja: "いつからここで働いているのですか？",           en: "How long have you been working here?" },
@@ -684,18 +713,18 @@
     { id: 76,  ja: "何が起きたのか教えてください。",               en: "Tell me what happened." },
     { id: 77,  ja: "それをどこで買ったのか覚えていません。",       en: "I don't remember where I bought it." },
     { id: 78,  ja: "昨夜、誰と電話していたのですか？",             en: "Who were you talking to on the phone last night?" },
-    { id: 79,  ja: "何がそんなにあなたを怒らせているのですか？",   en: "What makes you so angry?" },
+    { id: 79,  ja: "何がそんなにあなたを怒らせているのですか？",   en: "What's making you so angry?" },
     { id: 80,  ja: "コーヒーのおかわりはいかがですか？",           en: "Would you like another cup of coffee?" },
-    { id: 81,  ja: "おすすめのレストランはありますか？",           en: "Do you have any recommended restaurants?" },
-    { id: 82,  ja: "準備ができたら声をかけてください。",           en: "Please let me know when you are ready." },
+    { id: 81,  ja: "おすすめのレストランはありますか？",           en: "Do you have any restaurants you'd recommend?" },
+    { id: 82,  ja: "準備ができたら声をかけてください。",           en: "Just let me know when you're ready." },
     { id: 83,  ja: "彼は今、忙しいに違いありません。",             en: "He must be busy right now." },
     { id: 84,  ja: "もっと練習したほうがいいですよ。",             en: "You should practice more." },
     { id: 85,  ja: "それは本気で言っているのですか？",             en: "Are you serious about that?" },
     { id: 86,  ja: "傘を持ってくるのを忘れてしまいました。",       en: "I forgot to bring my umbrella." },
     { id: 87,  ja: "彼が来るまで、ここで待ちましょう。",           en: "Let's wait here until he comes." },
-    { id: 88,  ja: "昨日はとても疲れていて、すぐに寝てしまいました。", en: "I was so tired yesterday that I went to sleep right away." },
+    { id: 88,  ja: "昨日はとても疲れていて、すぐに寝てしまいました。", en: "I was so tired yesterday that I fell asleep right away." },
     { id: 89,  ja: "彼女に本当のことを言うべきだと思いますか？",   en: "Do you think I should tell her the truth?" },
-    { id: 90,  ja: "いつか海外で働いてみたいです。",               en: "I want to work abroad someday." },
+    { id: 90,  ja: "いつか海外で働いてみたいです。",               en: "I'd like to work abroad someday." },
     { id: 91,  ja: "駅まで送っていきますよ。",                     en: "I'll give you a ride to the station." },
     { id: 92,  ja: "昨夜は飲みすぎてしまいました。",               en: "I drank too much last night." },
     { id: 93,  ja: "彼はもう、ここには住んでいません。",           en: "He doesn't live here anymore." },
@@ -703,7 +732,7 @@
     { id: 95,  ja: "明日までにこれを終わらせなければなりません。", en: "I have to finish this by tomorrow." },
     { id: 96,  ja: "ずっとあなたに言おうと思っていたのです。",     en: "I've been meaning to tell you." },
     { id: 97,  ja: "何を注文するか、もう決めましたか？",           en: "Have you decided what to order?" },
-    { id: 98,  ja: "彼とはもう5年も会っていません。",              en: "I haven't seen him for five years." },
+    { id: 98,  ja: "彼とはもう5年も会っていません。",              en: "I haven't seen him in five years." },
     { id: 99,  ja: "今の仕事はどのくらい続けているのですか？",     en: "How long have you been doing your current job?" },
     { id: 100, ja: "この国にはどのくらい住んでいるのですか？",     en: "How long have you lived in this country?" }
   ];
